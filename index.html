@@ -7,10 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Firebase SDK (v9 compat for easy single-file usage) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <style>
     :root {
@@ -52,7 +48,6 @@
       line-height: 1.5;
     }
 
-    /* Top App Header */
     .header-banner {
       background: linear-gradient(135deg, #0a3353 0%, #115383 60%, #1ea362 100%);
       color: white;
@@ -105,7 +100,6 @@
       font-weight: 400;
     }
 
-    /* Cloud Sync Status Pill */
     .cloud-status-pill {
       display: inline-flex;
       align-items: center;
@@ -126,14 +120,12 @@
       box-shadow: 0 0 8px #4ade80;
     }
 
-    /* Container */
     .container {
       max-width: 600px;
       margin: 0 auto;
       padding: 16px;
     }
 
-    /* Navigation Tabs */
     .nav-tabs {
       display: flex;
       background: white;
@@ -168,7 +160,6 @@
       box-shadow: 0 4px 12px rgba(14, 65, 102, 0.25);
     }
 
-    /* Card UI */
     .card {
       background: var(--card-bg);
       border-radius: var(--radius-lg);
@@ -203,7 +194,6 @@
     .tag-green { background: var(--secondary-light); color: var(--secondary-dark); }
     .tag-coral { background: #ffebee; color: var(--accent-coral); }
 
-    /* Form Fields */
     .form-group {
       margin-bottom: 14px;
     }
@@ -237,7 +227,6 @@
       gap: 12px;
     }
 
-    /* Question blocks */
     .question-item {
       padding: 14px;
       border-radius: var(--radius-md);
@@ -259,7 +248,6 @@
       margin-bottom: 10px;
     }
 
-    /* Radio / Selection pill buttons */
     .options-row {
       display: flex;
       flex-wrap: wrap;
@@ -305,7 +293,6 @@
       color: var(--accent-coral);
     }
 
-    /* Alert / Guidance box */
     .alert-box {
       padding: 12px 14px;
       border-radius: var(--radius-md);
@@ -326,13 +313,7 @@
       border: 1px solid #fde68a;
       color: #92400e;
     }
-    .alert-success {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      color: #166534;
-    }
 
-    /* Score badges & result items */
     .result-badge {
       display: inline-flex;
       align-items: center;
@@ -345,7 +326,6 @@
     .badge-risk { background: #fee2e2; color: #b91c1c; }
     .badge-moderate { background: #fef3c7; color: #b45309; }
 
-    /* Action Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -381,13 +361,7 @@
       color: white;
       box-shadow: 0 4px 14px rgba(30, 163, 98, 0.3);
     }
-    .btn-outline-danger {
-      background: white;
-      color: var(--danger);
-      border: 1.5px solid var(--danger);
-    }
 
-    /* History & Stat Table */
     .history-card {
       background: white;
       border-radius: var(--radius-md);
@@ -421,7 +395,6 @@
       margin-top: 2px;
     }
 
-    /* Cloud Settings Modal / Section */
     .cloud-setting-box {
       background: #f8fafc;
       border: 1px dashed #cbd5e1;
@@ -468,7 +441,7 @@
     </p>
     <div class="cloud-status-pill">
       <span class="status-dot" id="cloud-indicator"></span>
-      <span id="cloud-status-text">เชื่อมต่อ Cloud Database ส่วนกลาง</span>
+      <span id="cloud-status-text">พร้อมใช้งาน</span>
     </div>
   </header>
 
@@ -533,10 +506,9 @@
         </div>
 
         <div class="alert-box alert-info">
-          <div>💡 <strong>คำชี้แจง:</strong> ให้ทำแบบคัดกรอง 2 คำถาม (2Q) ก่อน หากมีอาการข้อใดข้อหนึ่ง (ตอบ "มี") ระบบจะเปิดแบบประเมิน 9Q ให้ประเมินต่อทันที</div>
+          <div>💡 <strong>คำชี้แจง:</strong> ให้ทำแบบคัดกรอง 2 คำถาม (2Q) ก่อน หากตอบ "มี" ข้อใดข้อหนึ่ง ระบบจะเปิด 9Q ให้ประเมินต่อทันที</div>
         </div>
 
-        <!-- 2Q Questions -->
         <div class="question-item">
           <div class="question-title">1. ใน 2 สัปดาห์ที่ผ่านมา รวมวันนี้ ท่านรู้สึก "หดหู่ เศร้า หรือท้อแท้สิ้นหวัง" หรือไม่?</div>
           <div class="options-row">
@@ -565,10 +537,9 @@
           </div>
         </div>
 
-        <!-- Dynamic 9Q Section -->
         <div id="section-9q" style="display: none; margin-top: 20px; border-top: 2px dashed #fca5a5; padding-top: 16px;">
           <div class="alert-box alert-warning">
-            ⚠️ <strong>ผล 2Q ผิดปกติ (มีความเสี่ยง):</strong> จำเป็นต้องทำแบบประเมิน 9Q ต่อไปนี้ โดยให้เลือกความถี่ของอาการในช่วง 2 สัปดาห์ที่ผ่านมารวมวันนี้
+            ⚠️ <strong>ผล 2Q พบความเสี่ยง:</strong> ให้ประเมินระดับอาการ 9Q ต่อไปนี้
           </div>
           <div id="container-9q-questions"></div>
         </div>
@@ -586,10 +557,8 @@
 
         <div class="alert-box alert-info">
           <div>
-            <strong>เกณฑ์การให้คะแนน:</strong><br>
-            • 1 แต้ม = ไม่เคยเลย หรือนานๆ ครั้งใน 1 ปี | 2 แต้ม = 1-2 ครั้ง/เดือน<br>
-            • 3 แต้ม = เกือบทุกสัปดาห์ | 4 แต้ม = เกือบทุกวัน<br>
-            <em>(คะแนนรวม > 30 คะแนน = ควรไปพบแพทย์)</em>
+            <strong>เกณฑ์การให้คะแนน:</strong> 1 = ไม่เคย/นานๆ ครั้ง | 2 = 1-2 ครั้ง/เดือน | 3 = เกือบทุกสัปดาห์ | 4 = เกือบทุกวัน<br>
+            <em>(คะแนนรวม > 30 คะแนน = มีความเสี่ยง ควรปรึกษาแพทย์)</em>
           </div>
         </div>
 
@@ -606,10 +575,9 @@
           <span class="card-tag tag-green">สุขภาพกาย</span>
         </div>
 
-        <!-- 1. Instability -->
         <div class="question-item">
           <div class="question-title">1. การทรงตัวและการหกล้ม (Instability)</div>
-          <p class="question-sub">ตอบ "ใช่" ข้อใดข้อหนึ่ง ถือว่าผิดปกติ</p>
+          <p class="question-sub">ตอบ "ใช่" ข้อใดข้อหนึ่ง ถือว่ามีความเสี่ยง</p>
           <div style="display:flex; flex-direction:column; gap:8px;">
             <label style="display:flex; align-items:center; gap:8px; font-size:13.5px;">
               <input type="checkbox" id="instability_1" style="width:18px; height:18px;"> มีประวัติหกล้มใน 1 ปีที่ผ่านมา
@@ -623,7 +591,6 @@
           </div>
         </div>
 
-        <!-- 2. Inanition -->
         <div class="question-item">
           <div class="question-title">2. ภาวะทุพโภชนาการ (Inanition)</div>
           <div class="question-sub">น้ำหนักลดลง > 3 kg ใน 3 เดือน หรือความอยากอาหารลดลง</div>
@@ -639,7 +606,6 @@
           </div>
         </div>
 
-        <!-- 3. Urinary Incontinence -->
         <div class="question-item">
           <div class="question-title">3. การกลั้นปัสสาวะ (Urinary Incontinence)</div>
           <div class="question-sub">มีปัสสาวะเล็ดราดจนส่งผลกระทบต่อกิจวัตรประจำวันหรือไม่</div>
@@ -655,7 +621,6 @@
           </div>
         </div>
 
-        <!-- 4. Insomnia -->
         <div class="question-item">
           <div class="question-title">4. การนอนไม่หลับ (Insomnia)</div>
           <div class="question-sub">มีอาการนอนไม่หลับจนส่งผลกระทบต่อกิจวัตรประจำวัน</div>
@@ -671,7 +636,6 @@
           </div>
         </div>
 
-        <!-- 5. Impair Sensory -->
         <div class="question-item">
           <div class="question-title">5. การรับความรู้สึก (Impair Sensory)</div>
           <p class="question-sub"><strong>5.1 สายตาและการมองเห็น:</strong></p>
@@ -700,7 +664,6 @@
           </div>
         </div>
 
-        <!-- 6. Isolation -->
         <div class="question-item">
           <div class="question-title">6. สภาพแวดล้อมทางสังคม (Isolation)</div>
           <div class="question-sub">อาศัยอยู่ที่บ้านคนเดียว หรือรู้สึกเหงาบ่อยหรือไม่</div>
@@ -716,12 +679,9 @@
           </div>
         </div>
 
-        <!-- 7. Sarcopenia (Yubi-Wakka Test) -->
         <div class="question-item">
           <div class="question-title">7. ภาวะมวลกล้ามเนื้อน้อย (Sarcopenia: Yubi Wakka Test)</div>
-          <div class="question-sub">
-            วัดเส้นรอบน่องข้างที่ไม่ถนัด ตรงจุดที่นูนที่สุด ด้วยนิ้วโป้งและนิ้วชี้ทั้งสองข้าง
-          </div>
+          <div class="question-sub">วัดรอบน่องส่วนที่โตที่สุดด้วยนิ้วโป้งและชี้ทั้งสองข้างรอบน่อง</div>
           <div class="options-row" style="flex-direction: column;">
             <div class="option-pill">
               <input type="radio" name="gs_sarcopenia" id="wakka_1" value="low" checked>
@@ -744,7 +704,6 @@
           </div>
         </div>
 
-        <!-- 8. Immobility (Barthel ADL) -->
         <div class="question-item">
           <div class="question-title">8. กิจวัตรประจำวันพื้นฐาน (Immobility: Barthel ADL)</div>
           <p class="question-sub">ประเมิน 10 กิจกรรมพื้นฐาน (คะแนนเต็ม 20 คะแนน)</p>
@@ -756,22 +715,20 @@
       <div style="margin-top: 20px; margin-bottom: 40px;">
         <button class="btn btn-primary" id="btn-submit-eval" onclick="calculateAndShowSummary()">
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
-          <span id="btn-submit-text">ประมวลผล & บันทึกลง Cloud Database</span>
+          <span id="btn-submit-text">ประมวลผล & บันทึกข้อมูล</span>
         </button>
       </div>
     </section>
 
-    <!-- VIEW 2: INDIVIDUAL SUMMARY & ADVICE (PDF EXPORTABLE) -->
+    <!-- VIEW 2: INDIVIDUAL SUMMARY -->
     <section id="summary-view" style="display: none;">
       <div class="card" id="printable-area">
         <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--primary); padding-bottom: 12px;">
           <h2 style="color: var(--primary); font-size: 19px; font-weight: 700;">แบบสรุปผลการประเมินสุขภาพสูงวัย</h2>
           <h3 style="color: var(--secondary); font-size: 15px; font-weight: 600;">โครงการ ศาลายา สมองดี ชีวีมีสุข</h3>
           <p style="font-size: 12px; color: var(--text-muted);">ศูนย์การแพทย์กาญจนาภิเษก คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล</p>
-          <div style="font-size: 11px; color: #16a34a; margin-top: 4px;">☁️ บันทึกลงระบบฐานข้อมูลกลางออนไลน์เรียบร้อยแล้ว</div>
         </div>
 
-        <!-- Profile Section -->
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 12px; margin-bottom: 16px; font-size: 13.5px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
             <span><strong>ชื่อ-นามสกุล:</strong> <span id="sum-name">-</span></span>
@@ -783,7 +740,6 @@
           </div>
         </div>
 
-        <!-- Results Table -->
         <div class="card-title" style="margin-bottom: 10px; font-size: 15px;">📊 สรุปผลคะแนนและการคัดกรอง</div>
         <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 18px;">
           <thead>
@@ -796,13 +752,11 @@
           <tbody id="summary-table-body"></tbody>
         </table>
 
-        <!-- Clinical Recommendations -->
         <div class="card-title" style="margin-bottom: 8px; font-size: 15px; color: #1e3a8a;">
           🩺 คำแนะนำเบื้องต้นและการดูแลสุขภาพ
         </div>
         <div id="recommendations-container" style="display: flex; flex-direction: column; gap: 10px; font-size: 13.5px; line-height: 1.5; margin-bottom: 24px;"></div>
 
-        <!-- Sign area -->
         <div style="margin-top: 30px; display: flex; justify-content: flex-end;">
           <div style="text-align: center; width: 220px; border-top: 1px dashed #94a3b8; padding-top: 6px; font-size: 12.5px;">
             ลงนามผู้ประเมิน: <span id="sum-sign-assessor" style="font-weight: 600;">...................................</span><br>
@@ -812,13 +766,11 @@
       </div>
 
       <div class="no-print" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 40px;">
-        <button class="btn btn-success" onclick="exportPDF()">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.5L17 7.5V18a2 2 0 01-2 2z"/></svg>
-          พิมพ์ / บันทึกผลเป็น PDF File
+        <button class="btn btn-success" onclick="window.print()">
+          🖨️ พิมพ์ / บันทึกผลเป็น PDF File
         </button>
         <button class="btn btn-secondary" onclick="switchView('form-view')">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 17l-5-5m0 0l5-5m-5 5h12"/></svg>
-          กลับไปแก้ไขแบบฟอร์ม
+          ↩️ กลับไปแก้ไขแบบฟอร์ม
         </button>
         <button class="btn btn-primary" onclick="resetFormForNewPatient()">
           ➕ ประเมินผู้ป่วยรายต่อไป
@@ -826,13 +778,13 @@
       </div>
     </section>
 
-    <!-- VIEW 3: DATABASE & STATISTICAL SUMMARY (SHARED CLOUD) -->
+    <!-- VIEW 3: DATABASE & STATISTICAL SUMMARY -->
     <section id="database-view" style="display: none;">
       <div class="card">
         <div class="card-header">
           <div class="card-title">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-            สรุปผลสถิติส่วนกลาง (Cloud Real-Time)
+            สรุปผลสถิติส่วนกลาง
           </div>
           <button onclick="fetchCloudData()" style="background:none; border:none; color:var(--primary); font-size:12px; cursor:pointer; font-weight:600;">
             🔄 รีเฟรชข้อมูล
@@ -868,15 +820,12 @@
         <!-- Cloud Configuration Expander -->
         <div class="cloud-setting-box">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <strong>⚙️ ตั้งค่าการเชื่อมต่อฐานข้อมูลกลาง (Cloud Settings)</strong>
-            <button onclick="toggleCloudConfig()" style="border:none; background:transparent; color:var(--primary); font-size:12px; cursor:pointer; font-weight:600;">[คลิกเพื่อตั้งค่า]</button>
+            <strong>⚙️ การเชื่อมต่อ Google Sheet (Apps Script URL)</strong>
+            <button onclick="toggleCloudConfig()" style="border:none; background:transparent; color:var(--primary); font-size:12px; cursor:pointer; font-weight:600;">[ตั้งค่า]</button>
           </div>
           <div id="cloud-config-fields" style="display:none; margin-top:10px;">
-            <p style="margin-bottom:6px; color:#475569;">
-              สามารถระบุ <strong>Google Apps Script Web App URL</strong> หรือใช้ <strong>Firebase</strong> เพื่อซิงค์ข้อมูลร่วมกันได้ทุกอุปกรณ์:
-            </p>
             <input type="text" id="cloud-api-url" class="form-control" style="font-size:12px; margin-bottom:8px;" placeholder="https://script.google.com/macros/s/.../exec">
-            <button class="btn btn-secondary" style="font-size:12px; padding:6px 10px;" onclick="saveCloudConfig()">บันทึกการตั้งค่า Cloud</button>
+            <button class="btn btn-secondary" style="font-size:12px; padding:6px 10px;" onclick="saveCloudConfig()">บันทึก URL</button>
           </div>
         </div>
 
@@ -892,13 +841,13 @@
         <div class="card-header">
           <div class="card-title">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            ประวัติการประเมินจากทุกเครื่อง (Cloud History)
+            ประวัติการประเมิน
           </div>
           <span class="card-tag tag-blue" id="stat-total-count">0 ราย</span>
         </div>
         <div id="history-records-list">
           <div style="text-align:center; padding: 25px 10px; color: var(--text-muted); font-size: 13.5px;">
-            กำลังโหลดข้อมูลจาก Cloud...
+            กำลังโหลดข้อมูล...
           </div>
         </div>
       </div>
@@ -911,7 +860,7 @@
     const DEFAULT_CLOUD_ENDPOINT = localStorage.getItem('salaya_cloud_api') || HARDCODED_CLOUD_URL;
 
     let globalRecords = [];
-    let isSubmitting = false; // ป้องกันการกดเบิ้ล/กดซ้ำ
+    let isSubmitting = false;
 
     const questions9Q = [
       "1. เบื่อ ไม่สนใจอยากทำอะไร",
@@ -1074,7 +1023,7 @@
     let currentEvaluation = null;
 
     async function calculateAndShowSummary() {
-      if (isSubmitting) return; // หากกำลังส่งอยู่ ป้องกันคลิกซ้ำ
+      if (isSubmitting) return;
 
       const name = document.getElementById('pt-name').value.trim();
       const age = document.getElementById('pt-age').value.trim();
@@ -1086,15 +1035,13 @@
         return;
       }
 
-      // ล็อกปุ่มกดป้องกันคลิกย้ำ
       isSubmitting = true;
       const submitBtn = document.getElementById('btn-submit-eval');
       const submitText = document.getElementById('btn-submit-text');
       submitBtn.disabled = true;
-      submitText.textContent = "⏳ กำลังบันทึกข้อมูลขึ้นระบบ...";
+      submitText.textContent = "⏳ กำลังบันทึกข้อมูล...";
 
       try {
-        // 1. 2Q & 9Q
         const q2_1 = parseInt(document.querySelector('input[name="q2_1"]:checked').value);
         const q2_2 = parseInt(document.querySelector('input[name="q2_2"]:checked').value);
         const is2QPositive = (q2_1 === 1 || q2_2 === 1);
@@ -1122,14 +1069,12 @@
           }
         }
 
-        // 2. Dementia 14
         let demTotal = 0;
         for (let i = 0; i < 14; i++) {
           demTotal += parseInt(document.querySelector(`input[name="dementia_${i}"]:checked`).value);
         }
         const isDementiaRisk = demTotal > 30;
 
-        // 3. GS
         const isInstabilityAbnormal = (document.getElementById('instability_1').checked || 
                                        document.getElementById('instability_2').checked || 
                                        document.getElementById('instability_3').checked);
@@ -1147,7 +1092,6 @@
         if (sarcopeniaVal === 'medium') sarcopeniaText = "น่องพอดีวงนิ้ว (เสี่ยงปานกลาง)";
         if (sarcopeniaVal === 'high') sarcopeniaText = "น่องเล็กกว่าวงนิ้ว (เสี่ยงสูง)";
 
-        // ADL
         let adlTotal = 0;
         for (let i = 0; i < 10; i++) {
           adlTotal += parseInt(document.querySelector(`input[name="adl_${i}"]:checked`).value);
@@ -1170,52 +1114,42 @@
           adlTotal, adlGroup
         };
 
-        // Push to Central Cloud Database
         await saveToCloud(currentEvaluation);
-
         displaySummary(currentEvaluation);
         switchView('summary-view');
       } finally {
-        // คืนสถานะปุ่ม
         isSubmitting = false;
         submitBtn.disabled = false;
-        submitText.textContent = "ประมวลผล & บันทึกลง Cloud Database";
+        submitText.textContent = "ประมวลผล & บันทึกข้อมูล";
       }
     }
 
-    // --- CLOUD SYNC ENGINE ---
     async function saveToCloud(record) {
       let local = JSON.parse(localStorage.getItem('salaya_records') || '[]');
       local.unshift(record);
       localStorage.setItem('salaya_records', JSON.stringify(local));
 
       const apiUrl = localStorage.getItem('salaya_cloud_api') || DEFAULT_CLOUD_ENDPOINT;
-
       if (apiUrl) {
         try {
-          updateCloudIndicator(true, "กำลังส่งข้อมูลขึ้น Cloud...");
+          updateCloudIndicator(true, "กำลังส่งข้อมูล...");
           await fetch(apiUrl, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "CREATE", ...record })
           });
-          updateCloudIndicator(true, "เชื่อมต่อ Cloud Database สำเร็จ");
+          updateCloudIndicator(true, "บันทึกข้อมูลเรียบร้อย");
         } catch (e) {
           console.warn("Cloud push error:", e);
-          updateCloudIndicator(false, "บันทึกในเครื่องแล้ว (รอซิงค์ออนไลน์)");
-        }
-      } else {
-        if (window.BroadcastChannel) {
-          const bc = new BroadcastChannel('salaya_cloud_bus');
-          bc.postMessage({ type: 'NEW_RECORD', record });
+          updateCloudIndicator(false, "บันทึกในเครื่องแล้ว (โหมดออฟไลน์)");
         }
       }
     }
 
     async function fetchCloudData() {
       const apiUrl = localStorage.getItem('salaya_cloud_api') || DEFAULT_CLOUD_ENDPOINT;
-      updateCloudIndicator(true, "กำลังดึงข้อมูลล่าสุดจาก Cloud...");
+      updateCloudIndicator(true, "กำลังดึงข้อมูลล่าสุด...");
 
       if (apiUrl) {
         try {
@@ -1224,55 +1158,50 @@
           if (Array.isArray(data)) {
             globalRecords = data;
           }
-          updateCloudIndicator(true, "ข้อมูลบน Cloud เป็นปัจจุบัน");
+          updateCloudIndicator(true, "เชื่อมต่อ Cloud สำเร็จ");
         } catch (e) {
           console.warn("Fetch cloud error, fallback to local:", e);
           globalRecords = JSON.parse(localStorage.getItem('salaya_records') || '[]');
-          updateCloudIndicator(false, "กำลังแสดงข้อมูลสำรองในระบบ");
+          updateCloudIndicator(false, "แสดงข้อมูลสำรองในเครื่อง");
         }
       } else {
         globalRecords = JSON.parse(localStorage.getItem('salaya_records') || '[]');
-        updateCloudIndicator(true, "ระบบพร้อมเชื่อมต่อ Cloud Database");
+        updateCloudIndicator(true, "พร้อมเชื่อมต่อ");
       }
 
       renderStatsAndHistory(globalRecords);
     }
 
-    // --- ฟังก์ชันลบข้อมูลรายคน ---
+    // ลบข้อมูลแบบไม่มีการส่งสัญญาณสะท้อนกลับ
     async function deleteRecord(id, name) {
       if (!confirm(`คุณต้องการลบข้อมูลการประเมินของ "${name}" ใช่หรือไม่?`)) {
         return;
       }
 
-      // 1. ลบจาก Global array และ LocalStorage
+      // 1. อัปเดตฝั่งหน้าบ้านทันที
       globalRecords = globalRecords.filter(item => item.id !== id);
       let local = JSON.parse(localStorage.getItem('salaya_records') || '[]');
       local = local.filter(item => item.id !== id);
       localStorage.setItem('salaya_records', JSON.stringify(local));
 
-      // เรนเดอร์หน้าจอใหม่ทันที
       renderStatsAndHistory(globalRecords);
 
-      // 2. ส่ง request แจ้งไปยัง Cloud/Apps Script
+      // 2. สั่งลบที่ Google Apps Script
       const apiUrl = localStorage.getItem('salaya_cloud_api') || DEFAULT_CLOUD_ENDPOINT;
       if (apiUrl) {
         try {
-          updateCloudIndicator(true, "กำลังลบข้อมูลออกจาก Cloud...");
+          updateCloudIndicator(true, "กำลังลบข้อมูลใน Cloud...");
           await fetch(apiUrl, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "DELETE", id: id })
           });
-          updateCloudIndicator(true, "ลบข้อมูลสำเร็จแล้ว");
+          updateCloudIndicator(true, "ลบข้อมูลสำเร็จ");
         } catch (e) {
           console.warn("Cloud delete error:", e);
+          updateCloudIndicator(false, "เชื่อมต่อ Cloud ขัดข้อง");
         }
-      }
-
-      if (window.BroadcastChannel) {
-        const bc = new BroadcastChannel('salaya_cloud_bus');
-        bc.postMessage({ type: 'DELETE_RECORD', id: id });
       }
     }
 
@@ -1284,15 +1213,6 @@
         dot.style.boxShadow = isOnline ? '0 0 8px #4ade80' : '0 0 8px #f59e0b';
         label.textContent = text;
       }
-    }
-
-    if (window.BroadcastChannel) {
-      const bc = new BroadcastChannel('salaya_cloud_bus');
-      bc.onmessage = (event) => {
-        if (event.data && (event.data.type === 'NEW_RECORD' || event.data.type === 'DELETE_RECORD')) {
-          fetchCloudData();
-        }
-      };
     }
 
     function renderStatsAndHistory(list) {
@@ -1317,11 +1237,17 @@
       let adlSocial = 0, adlHome = 0, adlBed = 0;
 
       list.forEach(r => {
-        if (r.isDementiaRisk) demCount++;
-        if (r.is2QPositive && r.q9Total >= 7) depressCount++;
-        if (r.isInstabilityAbnormal) fallsCount++;
-        if (r.adlTotal >= 12) adlSocial++;
-        else if (r.adlTotal >= 5) adlHome++;
+        const isDem = r.isDementiaRisk === true || r.isDementiaRisk === "เสี่ยง";
+        const is2Q = r.is2QPositive === true || r.is2QPositive === "เสี่ยง";
+        const isFalls = r.isInstabilityAbnormal === true || r.isInstabilityAbnormal === "เสี่ยง";
+
+        if (isDem) demCount++;
+        if (is2Q && parseInt(r.q9Total) >= 7) depressCount++;
+        if (isFalls) fallsCount++;
+
+        const adlScore = parseInt(r.adlTotal) || 0;
+        if (adlScore >= 12) adlSocial++;
+        else if (adlScore >= 5) adlHome++;
         else adlBed++;
       });
 
@@ -1337,6 +1263,10 @@
 
       let historyHtml = '';
       list.forEach(item => {
+        const isDem = item.isDementiaRisk === true || item.isDementiaRisk === "เสี่ยง";
+        const is2Q = item.is2QPositive === true || item.is2QPositive === "เสี่ยง";
+        const isFalls = item.isInstabilityAbnormal === true || item.isInstabilityAbnormal === "เสี่ยง";
+
         historyHtml += `
           <div class="history-card">
             <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
@@ -1344,16 +1274,16 @@
               <span style="font-size: 12px; color: var(--text-muted);">${item.date}</span>
             </div>
             <div style="font-size: 12.5px; color: #475569; display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
-              <span class="card-tag ${item.isDementiaRisk ? 'tag-coral' : 'tag-green'}">ความจำ: ${item.demTotal} แต้ม (${item.isDementiaRisk ? 'เสี่ยง' : 'ปกติ'})</span>
-              <span class="card-tag ${item.is2QPositive && item.q9Total>=7 ? 'tag-coral' : 'tag-blue'}">ซึมเศร้า: ${item.is2QPositive ? '9Q='+item.q9Total : '2Q ปกติ'}</span>
+              <span class="card-tag ${isDem ? 'tag-coral' : 'tag-green'}">ความจำ: ${item.demTotal} แต้ม (${isDem ? 'เสี่ยง' : 'ปกติ'})</span>
+              <span class="card-tag ${is2Q && item.q9Total>=7 ? 'tag-coral' : 'tag-blue'}">ซึมเศร้า: ${is2Q ? '9Q='+item.q9Total : '2Q ปกติ'}</span>
               <span class="card-tag tag-blue">ADL: ${item.adlTotal} แต้ม</span>
-              <span class="card-tag ${item.isInstabilityAbnormal ? 'tag-coral' : 'tag-green'}">${item.isInstabilityAbnormal ? 'เสี่ยงล้ม' : 'ทรงตัวดี'}</span>
+              <span class="card-tag ${isFalls ? 'tag-coral' : 'tag-green'}">${isFalls ? 'เสี่ยงล้ม' : 'ทรงตัวดี'}</span>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #edf2f7; padding-top: 8px; font-size: 12px;">
               <span style="color: var(--text-muted);">ผู้ประเมิน: ${item.assessor}</span>
               <div style="display: flex; gap: 6px;">
                 <button onclick="viewRecord('${item.id}')" style="background: var(--primary-light); color: var(--primary); border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-weight: 600;">
-                  ดูผลสรุป / PDF
+                  ดูผลสรุป
                 </button>
                 <button onclick="deleteRecord('${item.id}', '${item.name}')" style="background: #fee2e2; color: var(--danger); border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-weight: 600;">
                   🗑️ ลบ
@@ -1383,23 +1313,32 @@
       document.getElementById('sum-sign-assessor').textContent = data.assessor;
       document.getElementById('sum-sign-name').textContent = data.assessor;
 
+      const is2Q = data.is2QPositive === true || data.is2QPositive === "เสี่ยง";
+      const isDem = data.isDementiaRisk === true || data.isDementiaRisk === "เสี่ยง";
+      const isFalls = data.isInstabilityAbnormal === true || data.isInstabilityAbnormal === "เสี่ยง";
+      const isIna = data.isInanitionAbnormal === true || data.isInanitionAbnormal === "ผิดปกติ" || data.isInanitionAbnormal == 1;
+      const isUri = data.isUrineAbnormal === true || data.isUrineAbnormal === "ผิดปกติ" || data.isUrineAbnormal == 1;
+      const isSleep = data.isInsomniaAbnormal === true || data.isInsomniaAbnormal === "ผิดปกติ" || data.isInsomniaAbnormal == 1;
+      const isVis = data.isVisionAbnormal === true || data.isVisionAbnormal === "ผิดปกติ";
+      const isHear = data.isHearingAbnormal === true || data.isHearingAbnormal === "ผิดปกติ" || data.isHearingAbnormal == 1;
+
       const tbody = document.getElementById('summary-table-body');
       tbody.innerHTML = `
         <tr style="border-bottom: 1px solid #e2e8f0;">
           <td style="padding: 9px 6px;"><strong>1. ภาวะซึมเศร้า 2Q</strong></td>
-          <td style="padding: 9px 6px; text-align: center;">${data.is2QPositive ? 'มีอาการ (Positive)' : 'ไม่มีอาการ (Negative)'}</td>
+          <td style="padding: 9px 6px; text-align: center;">${is2Q ? 'มีอาการ (Positive)' : 'ไม่มีอาการ (Negative)'}</td>
           <td style="padding: 9px 6px; text-align: right;">
-            <span class="result-badge ${data.is2QPositive ? 'badge-risk' : 'badge-normal'}">
-              ${data.is2QPositive ? '⚠️ มีความเสี่ยง' : '✅ ปกติ'}
+            <span class="result-badge ${is2Q ? 'badge-risk' : 'badge-normal'}">
+              ${is2Q ? '⚠️ มีความเสี่ยง' : '✅ ปกติ'}
             </span>
           </td>
         </tr>
         <tr style="border-bottom: 1px solid #e2e8f0;">
           <td style="padding: 9px 6px;"><strong>2. ภาวะซึมเศร้า 9Q</strong></td>
-          <td style="padding: 9px 6px; text-align: center;">${data.is2QPositive ? data.q9Total + ' คะแนน' : '-'}</td>
+          <td style="padding: 9px 6px; text-align: center;">${is2Q ? data.q9Total + ' คะแนน' : '-'}</td>
           <td style="padding: 9px 6px; text-align: right;">
             <span class="result-badge ${data.q9Total >= 7 ? 'badge-risk' : 'badge-normal'}">
-              ${data.is2QPositive ? (data.q9Total >= 7 ? '⚠️ ควรปรึกษาแพทย์' : '✅ ปกติ') : '✅ ปกติ'}
+              ${is2Q ? (data.q9Total >= 7 ? '⚠️ ควรปรึกษาแพทย์' : '✅ ปกติ') : '✅ ปกติ'}
             </span>
           </td>
         </tr>
@@ -1407,8 +1346,8 @@
           <td style="padding: 9px 6px;"><strong>3. คัดกรองความจำ (14 ข้อ)</strong></td>
           <td style="padding: 9px 6px; text-align: center;">${data.demTotal} / 56 คะแนน</td>
           <td style="padding: 9px 6px; text-align: right;">
-            <span class="result-badge ${data.isDementiaRisk ? 'badge-risk' : 'badge-normal'}">
-              ${data.isDementiaRisk ? '⚠️ ควรปรึกษาแพทย์ (>30)' : '✅ ปกติ'}
+            <span class="result-badge ${isDem ? 'badge-risk' : 'badge-normal'}">
+              ${isDem ? '⚠️ ควรปรึกษาแพทย์ (>30)' : '✅ ปกติ'}
             </span>
           </td>
         </tr>
@@ -1416,8 +1355,8 @@
           <td style="padding: 9px 6px;"><strong>4. การทรงตัว / หกล้ม (Instability)</strong></td>
           <td style="padding: 9px 6px; text-align: center;">-</td>
           <td style="padding: 9px 6px; text-align: right;">
-            <span class="result-badge ${data.isInstabilityAbnormal ? 'badge-risk' : 'badge-normal'}">
-              ${data.isInstabilityAbnormal ? '⚠️ เสี่ยงหกล้ม' : '✅ ปกติ'}
+            <span class="result-badge ${isFalls ? 'badge-risk' : 'badge-normal'}">
+              ${isFalls ? '⚠️ เสี่ยงหกล้ม' : '✅ ปกติ'}
             </span>
           </td>
         </tr>
@@ -1425,8 +1364,8 @@
           <td style="padding: 9px 6px;"><strong>5. โภชนาการ (Inanition)</strong></td>
           <td style="padding: 9px 6px; text-align: center;">-</td>
           <td style="padding: 9px 6px; text-align: right;">
-            <span class="result-badge ${data.isInanitionAbnormal ? 'badge-risk' : 'badge-normal'}">
-              ${data.isInanitionAbnormal ? '⚠️ นน.ลด / เบื่ออาหาร' : '✅ ปกติ'}
+            <span class="result-badge ${isIna ? 'badge-risk' : 'badge-normal'}">
+              ${isIna ? '⚠️ นน.ลด / เบื่ออาหาร' : '✅ ปกติ'}
             </span>
           </td>
         </tr>
@@ -1434,8 +1373,8 @@
           <td style="padding: 9px 6px;"><strong>6. ปัสสาวะเล็ด (Incontinence)</strong></td>
           <td style="padding: 9px 6px; text-align: center;">-</td>
           <td style="padding: 9px 6px; text-align: right;">
-            <span class="result-badge ${data.isUrineAbnormal ? 'badge-risk' : 'badge-normal'}">
-              ${data.isUrineAbnormal ? '⚠️ มีปัสสาวะเล็ด' : '✅ ปกติ'}
+            <span class="result-badge ${isUri ? 'badge-risk' : 'badge-normal'}">
+              ${isUri ? '⚠️ มีปัสสาวะเล็ด' : '✅ ปกติ'}
             </span>
           </td>
         </tr>
@@ -1443,8 +1382,8 @@
           <td style="padding: 9px 6px;"><strong>7. การนอนหลับ (Insomnia)</strong></td>
           <td style="padding: 9px 6px; text-align: center;">-</td>
           <td style="padding: 9px 6px; text-align: right;">
-            <span class="result-badge ${data.isInsomniaAbnormal ? 'badge-risk' : 'badge-normal'}">
-              ${data.isInsomniaAbnormal ? '⚠️ นอนไม่หลับ' : '✅ ปกติ'}
+            <span class="result-badge ${isSleep ? 'badge-risk' : 'badge-normal'}">
+              ${isSleep ? '⚠️ นอนไม่หลับ' : '✅ ปกติ'}
             </span>
           </td>
         </tr>
@@ -1452,8 +1391,8 @@
           <td style="padding: 9px 6px;"><strong>8. สายตา & การได้ยิน (Sensory)</strong></td>
           <td style="padding: 9px 6px; text-align: center;">-</td>
           <td style="padding: 9px 6px; text-align: right;">
-            <span class="result-badge ${(data.isVisionAbnormal || data.isHearingAbnormal) ? 'badge-risk' : 'badge-normal'}">
-              ${(data.isVisionAbnormal || data.isHearingAbnormal) ? '⚠️ พบความผิดปกติ' : '✅ ปกติ'}
+            <span class="result-badge ${(isVis || isHear) ? 'badge-risk' : 'badge-normal'}">
+              ${(isVis || isHear) ? '⚠️ พบความผิดปกติ' : '✅ ปกติ'}
             </span>
           </td>
         </tr>
@@ -1480,24 +1419,24 @@
       const recoContainer = document.getElementById('recommendations-container');
       let recos = [];
 
-      if (data.isDementiaRisk) {
-        recos.push(`<strong>🧠 ภาวะสมรรถภาพสมองและความจำ:</strong> ได้คะแนน ${data.demTotal} คะแนน (>30 คะแนน) บ่งชี้ว่ามีความเสี่ยงต่อภาวะสมองเสื่อม ควรส่งต่อพบแพทย์เวชศาสตร์ครอบครัว หรือแพทย์เฉพาะทางระบบประสาทเพื่อตรวจวินิจฉัยละเอียด`);
+      if (isDem) {
+        recos.push(`<strong>🧠 ภาวะสมรรถภาพสมองและความจำ:</strong> ได้คะแนน ${data.demTotal} คะแนน (>30 คะแนน) บ่งชี้ว่ามีความเสี่ยงต่อภาวะสมองเสื่อม ควรส่งต่อพบแพทย์เวชศาสตร์ครอบครัว หรือแพทย์เฉพาะทางระบบประสาท`);
       } else {
-        recos.push(`<strong>🧠 ภาวะสมรรถภาพสมอง:</strong> คะแนนอยู่ในเกณฑ์ปกติ (${data.demTotal} คะแนน) แนะนำให้ออกกำลังกายฝึกสมองต่อเนื่อง`);
+        recos.push(`<strong>🧠 ภาวะสมรรถภาพสมอง:</strong> คะแนนอยู่ในเกณฑ์ปกติ (${data.demTotal} คะแนน)`);
       }
 
-      if (data.is2QPositive && data.q9Total >= 7) {
+      if (is2Q && data.q9Total >= 7) {
         recos.push(`<strong>❤️ สุขภาพอารมณ์และจิตใจ (ซึมเศร้า):</strong> ผลการคัดกรอง 9Q ได้ ${data.q9Total} คะแนน (${data.q9Result}) ควรได้รับการประเมินความเสี่ยงต่อการทำร้ายตนเอง (8Q) และปรึกษาแพทย์`);
       } else {
         recos.push(`<strong>❤️ สุขภาพอารมณ์:</strong> ไม่พบความเสี่ยงของโรคซึมเศร้า`);
       }
 
-      if (data.isInstabilityAbnormal) {
-        recos.push(`<strong>🚶‍♂️ การป้องกันการหกล้ม:</strong> ผู้สูงอายุมีความเสี่ยงหกล้ม แนะนำให้ปรับสภาพแวดล้อมภายในบ้าน เช่น ติดราวจับในห้องน้ำ และฝึกกายบริหารกล้ามเนื้อขา`);
+      if (isFalls) {
+        recos.push(`<strong>🚶‍♂️ การป้องกันการหกล้ม:</strong> ผู้สูงอายุมีความเสี่ยงหกล้ม แนะนำให้ปรับสภาพแวดล้อมภายในบ้าน เช่น ติดราวจับในห้องน้ำ และออกกำลังกายฝึกกล้ามเนื้อขา`);
       }
 
       if (data.sarcopeniaVal === 'high' || data.sarcopeniaVal === 'medium') {
-        recos.push(`<strong>💪 ภาวะมวลกล้ามเนื้อ (Sarcopenia):</strong> ผลการวัด Yubi-Wakka มีความเสี่ยง แนะนำให้เพิ่มโปรตีนคุณภาพดี 1.0 - 1.2 กรัม/กก./วัน และฝึกเวทเทรนนิ่ง`);
+        recos.push(`<strong>💪 ภาวะมวลกล้ามเนื้อ (Sarcopenia):</strong> ผลการวัด Yubi-Wakka มีความเสี่ยง แนะนำให้รับประทานโปรตีนให้เพียงพอและฝึกออกกำลังกายเพิ่มแรงต้าน`);
       }
 
       let htmlRecos = '';
@@ -1505,10 +1444,6 @@
         htmlRecos += `<div style="background: #f8fafc; border-left: 4px solid var(--primary); padding: 10px 12px; border-radius: 4px;">${r}</div>`;
       });
       recoContainer.innerHTML = htmlRecos;
-    }
-
-    function exportPDF() {
-      window.print();
     }
 
     function resetFormForNewPatient() {
@@ -1550,7 +1485,7 @@
     function saveCloudConfig() {
       const val = document.getElementById('cloud-api-url').value.trim();
       localStorage.setItem('salaya_cloud_api', val);
-      alert('บันทึกการเชื่อมต่อ Cloud Database สำเร็จ ระบบจะดึงและบันทึกข้อมูลจากลิงก์นี้');
+      alert('บันทึก URL สำเร็จ');
       fetchCloudData();
     }
 
@@ -1560,7 +1495,7 @@
         return;
       }
 
-      let csv = "﻿";
+      let csv = "\uFEFF";
       csv += "วันที่,ชื่อ-นามสกุล,อายุ,ผู้ประเมิน,2Q_ผล,9Q_คะแนน,9Q_แปลผล,ความจำ_คะแนน,ความจำ_แปลผล,เสี่ยงล้ม,นน.ลด,ปัสสาวะเล็ด,นอนไม่หลับ,ตาผิดปกติ,หูผิดปกติ,อยู่คนเดียว,Sarcopenia,ADL_คะแนน,ADL_กลุ่ม\n";
 
       globalRecords.forEach(r => {
