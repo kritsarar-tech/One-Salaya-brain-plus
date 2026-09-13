@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -368,6 +366,11 @@
       box-shadow: 0 4px 14px rgba(14, 65, 102, 0.3);
     }
     .btn-primary:active { transform: scale(0.98); }
+    .btn-primary:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
     .btn-secondary {
       background: #f1f5f9;
       color: #334155;
@@ -751,9 +754,9 @@
 
       <!-- Action Button -->
       <div style="margin-top: 20px; margin-bottom: 40px;">
-        <button class="btn btn-primary" onclick="calculateAndShowSummary()">
+        <button class="btn btn-primary" id="btn-submit-eval" onclick="calculateAndShowSummary()">
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
-          ประมวลผล & บันทึกลง Cloud Database
+          <span id="btn-submit-text">ประมวลผล & บันทึกลง Cloud Database</span>
         </button>
       </div>
     </section>
@@ -904,20 +907,12 @@
   </div>
 
   <script>
-    // --- CLOUD DATABASE ARCHITECTURE ---
-    // The app supports Dual Cloud Sync:
-    // 1. Google Sheets Web App (Zero cost, everyone can view in Google Sheets directly)
-    // 2. Firebase Cloud Firestore (Real-time NoSQL cloud database)
-    // 3. High-resilient LocalStorage fallback to ensure zero data loss offline
-
-    // ตั้งค่า Default URL เริ่มต้นให้เป็นลิงก์ Apps Script ของคุณโดยตรง
     const HARDCODED_CLOUD_URL = "https://script.google.com/macros/s/AKfycbx71RNlLLebb9MvqDN178drIvZc-x_4C7cWY1gVehi7im8lXIgwx6lWFMUrTtEVbKTgNQ/exec";
     const DEFAULT_CLOUD_ENDPOINT = localStorage.getItem('salaya_cloud_api') || HARDCODED_CLOUD_URL;
 
-    // In-memory records synced from cloud
     let globalRecords = [];
+    let isSubmitting = false; // ป้องกันการกดเบิ้ล/กดซ้ำ
 
-    // --- QUESTION DEFINITIONS ---
     const questions9Q = [
       "1. เบื่อ ไม่สนใจอยากทำอะไร",
       "2. ไม่สบายใจ ซึมเศร้า ท้อแท้",
@@ -962,8 +957,6 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('pt-date').value = new Date().toISOString().split('T')[0];
-      
-      // กำหนดค่าให้ input แสดงลิงก์ default เสมอ
       document.getElementById('cloud-api-url').value = DEFAULT_CLOUD_ENDPOINT;
 
       // Render 9Q
@@ -1081,6 +1074,8 @@
     let currentEvaluation = null;
 
     async function calculateAndShowSummary() {
+      if (isSubmitting) return; // หากกำลังส่งอยู่ ป้องกันคลิกซ้ำ
+
       const name = document.getElementById('pt-name').value.trim();
       const age = document.getElementById('pt-age').value.trim();
       const date = document.getElementById('pt-date').value;
@@ -1091,92 +1086,105 @@
         return;
       }
 
-      // 1. 2Q & 9Q
-      const q2_1 = parseInt(document.querySelector('input[name="q2_1"]:checked').value);
-      const q2_2 = parseInt(document.querySelector('input[name="q2_2"]:checked').value);
-      const is2QPositive = (q2_1 === 1 || q2_2 === 1);
-      
-      let q9Total = 0;
-      let q9Result = "ปกติ (ไม่ต้องทำ 9Q)";
-      let q9Severity = "normal";
+      // ล็อกปุ่มกดป้องกันคลิกย้ำ
+      isSubmitting = true;
+      const submitBtn = document.getElementById('btn-submit-eval');
+      const submitText = document.getElementById('btn-submit-text');
+      submitBtn.disabled = true;
+      submitText.textContent = "⏳ กำลังบันทึกข้อมูลขึ้นระบบ...";
 
-      if (is2QPositive) {
-        for (let i = 0; i < 9; i++) {
-          q9Total += parseInt(document.querySelector(`input[name="q9_${i}"]:checked`).value);
+      try {
+        // 1. 2Q & 9Q
+        const q2_1 = parseInt(document.querySelector('input[name="q2_1"]:checked').value);
+        const q2_2 = parseInt(document.querySelector('input[name="q2_2"]:checked').value);
+        const is2QPositive = (q2_1 === 1 || q2_2 === 1);
+        
+        let q9Total = 0;
+        let q9Result = "ปกติ (ไม่ต้องทำ 9Q)";
+        let q9Severity = "normal";
+
+        if (is2QPositive) {
+          for (let i = 0; i < 9; i++) {
+            q9Total += parseInt(document.querySelector(`input[name="q9_${i}"]:checked`).value);
+          }
+          if (q9Total < 7) {
+            q9Result = "ไม่มีอาการของโรคซึมเศร้า หรือมีระดับน้อยมาก (<7)";
+            q9Severity = "normal";
+          } else if (q9Total <= 12) {
+            q9Result = "มีอาการของโรคซึมเศร้า ระดับน้อย (7-12)";
+            q9Severity = "mild";
+          } else if (q9Total <= 18) {
+            q9Result = "มีอาการของโรคซึมเศร้า ระดับปานกลาง (13-18)";
+            q9Severity = "moderate";
+          } else {
+            q9Result = "มีอาการของโรคซึมเศร้า ระดับรุนแรง (≥19)";
+            q9Severity = "severe";
+          }
         }
-        if (q9Total < 7) {
-          q9Result = "ไม่มีอาการของโรคซึมเศร้า หรือมีระดับน้อยมาก (<7)";
-          q9Severity = "normal";
-        } else if (q9Total <= 12) {
-          q9Result = "มีอาการของโรคซึมเศร้า ระดับน้อย (7-12)";
-          q9Severity = "mild";
-        } else if (q9Total <= 18) {
-          q9Result = "มีอาการของโรคซึมเศร้า ระดับปานกลาง (13-18)";
-          q9Severity = "moderate";
-        } else {
-          q9Result = "มีอาการของโรคซึมเศร้า ระดับรุนแรง (≥19)";
-          q9Severity = "severe";
+
+        // 2. Dementia 14
+        let demTotal = 0;
+        for (let i = 0; i < 14; i++) {
+          demTotal += parseInt(document.querySelector(`input[name="dementia_${i}"]:checked`).value);
         }
+        const isDementiaRisk = demTotal > 30;
+
+        // 3. GS
+        const isInstabilityAbnormal = (document.getElementById('instability_1').checked || 
+                                       document.getElementById('instability_2').checked || 
+                                       document.getElementById('instability_3').checked);
+        const isInanitionAbnormal = document.querySelector('input[name="gs_inanition"]:checked').value === "1";
+        const isUrineAbnormal = document.querySelector('input[name="gs_urine"]:checked').value === "1";
+        const isInsomniaAbnormal = document.querySelector('input[name="gs_sleep"]:checked').value === "1";
+        const isVisionAbnormal = (document.getElementById('sensory_vision_1').checked || 
+                                  document.getElementById('sensory_vision_2').checked || 
+                                  document.getElementById('sensory_vision_3').checked);
+        const isHearingAbnormal = document.querySelector('input[name="sensory_hearing"]:checked').value === "1";
+        const isIsolationAbnormal = document.querySelector('input[name="gs_isolation"]:checked').value === "1";
+
+        const sarcopeniaVal = document.querySelector('input[name="gs_sarcopenia"]:checked').value;
+        let sarcopeniaText = "น่องใหญ่กว่าวงนิ้ว (เสี่ยงต่ำ)";
+        if (sarcopeniaVal === 'medium') sarcopeniaText = "น่องพอดีวงนิ้ว (เสี่ยงปานกลาง)";
+        if (sarcopeniaVal === 'high') sarcopeniaText = "น่องเล็กกว่าวงนิ้ว (เสี่ยงสูง)";
+
+        // ADL
+        let adlTotal = 0;
+        for (let i = 0; i < 10; i++) {
+          adlTotal += parseInt(document.querySelector(`input[name="adl_${i}"]:checked`).value);
+        }
+        let adlGroup = "";
+        if (adlTotal >= 12) adlGroup = "กลุ่มที่ 1: ติดสังคม (≥12 แต้ม)";
+        else if (adlTotal >= 5) adlGroup = "กลุ่มที่ 2: ติดบ้าน (5-11 แต้ม)";
+        else adlGroup = "กลุ่มที่ 3: ติดเตียง (≤4 แต้ม)";
+
+        currentEvaluation = {
+          id: "REC_" + Date.now(),
+          timestamp: new Date().toISOString(),
+          name, age, date, assessor,
+          is2QPositive,
+          q9Total, q9Result, q9Severity,
+          demTotal, isDementiaRisk,
+          isInstabilityAbnormal, isInanitionAbnormal, isUrineAbnormal,
+          isInsomniaAbnormal, isVisionAbnormal, isHearingAbnormal,
+          isIsolationAbnormal, sarcopeniaVal, sarcopeniaText,
+          adlTotal, adlGroup
+        };
+
+        // Push to Central Cloud Database
+        await saveToCloud(currentEvaluation);
+
+        displaySummary(currentEvaluation);
+        switchView('summary-view');
+      } finally {
+        // คืนสถานะปุ่ม
+        isSubmitting = false;
+        submitBtn.disabled = false;
+        submitText.textContent = "ประมวลผล & บันทึกลง Cloud Database";
       }
-
-      // 2. Dementia 14
-      let demTotal = 0;
-      for (let i = 0; i < 14; i++) {
-        demTotal += parseInt(document.querySelector(`input[name="dementia_${i}"]:checked`).value);
-      }
-      const isDementiaRisk = demTotal > 30;
-
-      // 3. GS
-      const isInstabilityAbnormal = (document.getElementById('instability_1').checked || 
-                                     document.getElementById('instability_2').checked || 
-                                     document.getElementById('instability_3').checked);
-      const isInanitionAbnormal = document.querySelector('input[name="gs_inanition"]:checked').value === "1";
-      const isUrineAbnormal = document.querySelector('input[name="gs_urine"]:checked').value === "1";
-      const isInsomniaAbnormal = document.querySelector('input[name="gs_sleep"]:checked').value === "1";
-      const isVisionAbnormal = (document.getElementById('sensory_vision_1').checked || 
-                                document.getElementById('sensory_vision_2').checked || 
-                                document.getElementById('sensory_vision_3').checked);
-      const isHearingAbnormal = document.querySelector('input[name="sensory_hearing"]:checked').value === "1";
-      const isIsolationAbnormal = document.querySelector('input[name="gs_isolation"]:checked').value === "1";
-
-      const sarcopeniaVal = document.querySelector('input[name="gs_sarcopenia"]:checked').value;
-      let sarcopeniaText = "น่องใหญ่กว่าวงนิ้ว (เสี่ยงต่ำ)";
-      if (sarcopeniaVal === 'medium') sarcopeniaText = "น่องพอดีวงนิ้ว (เสี่ยงปานกลาง)";
-      if (sarcopeniaVal === 'high') sarcopeniaText = "น่องเล็กกว่าวงนิ้ว (เสี่ยงสูง)";
-
-      // ADL
-      let adlTotal = 0;
-      for (let i = 0; i < 10; i++) {
-        adlTotal += parseInt(document.querySelector(`input[name="adl_${i}"]:checked`).value);
-      }
-      let adlGroup = "";
-      if (adlTotal >= 12) adlGroup = "กลุ่มที่ 1: ติดสังคม (≥12 แต้ม)";
-      else if (adlTotal >= 5) adlGroup = "กลุ่มที่ 2: ติดบ้าน (5-11 แต้ม)";
-      else adlGroup = "กลุ่มที่ 3: ติดเตียง (≤4 แต้ม)";
-
-      currentEvaluation = {
-        id: "REC_" + Date.now(),
-        timestamp: new Date().toISOString(),
-        name, age, date, assessor,
-        is2QPositive,
-        q9Total, q9Result, q9Severity,
-        demTotal, isDementiaRisk,
-        isInstabilityAbnormal, isInanitionAbnormal, isUrineAbnormal,
-        isInsomniaAbnormal, isVisionAbnormal, isHearingAbnormal,
-        isIsolationAbnormal, sarcopeniaVal, sarcopeniaText,
-        adlTotal, adlGroup
-      };
-
-      // Push to Central Cloud Database
-      await saveToCloud(currentEvaluation);
-
-      displaySummary(currentEvaluation);
-      switchView('summary-view');
     }
 
     // --- CLOUD SYNC ENGINE ---
     async function saveToCloud(record) {
-      // 1. Always save to local backup
       let local = JSON.parse(localStorage.getItem('salaya_records') || '[]');
       local.unshift(record);
       localStorage.setItem('salaya_records', JSON.stringify(local));
@@ -1190,7 +1198,7 @@
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(record)
+            body: JSON.stringify({ action: "CREATE", ...record })
           });
           updateCloudIndicator(true, "เชื่อมต่อ Cloud Database สำเร็จ");
         } catch (e) {
@@ -1230,6 +1238,44 @@
       renderStatsAndHistory(globalRecords);
     }
 
+    // --- ฟังก์ชันลบข้อมูลรายคน ---
+    async function deleteRecord(id, name) {
+      if (!confirm(`คุณต้องการลบข้อมูลการประเมินของ "${name}" ใช่หรือไม่?`)) {
+        return;
+      }
+
+      // 1. ลบจาก Global array และ LocalStorage
+      globalRecords = globalRecords.filter(item => item.id !== id);
+      let local = JSON.parse(localStorage.getItem('salaya_records') || '[]');
+      local = local.filter(item => item.id !== id);
+      localStorage.setItem('salaya_records', JSON.stringify(local));
+
+      // เรนเดอร์หน้าจอใหม่ทันที
+      renderStatsAndHistory(globalRecords);
+
+      // 2. ส่ง request แจ้งไปยัง Cloud/Apps Script
+      const apiUrl = localStorage.getItem('salaya_cloud_api') || DEFAULT_CLOUD_ENDPOINT;
+      if (apiUrl) {
+        try {
+          updateCloudIndicator(true, "กำลังลบข้อมูลออกจาก Cloud...");
+          await fetch(apiUrl, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "DELETE", id: id })
+          });
+          updateCloudIndicator(true, "ลบข้อมูลสำเร็จแล้ว");
+        } catch (e) {
+          console.warn("Cloud delete error:", e);
+        }
+      }
+
+      if (window.BroadcastChannel) {
+        const bc = new BroadcastChannel('salaya_cloud_bus');
+        bc.postMessage({ type: 'DELETE_RECORD', id: id });
+      }
+    }
+
     function updateCloudIndicator(isOnline, text) {
       const dot = document.getElementById('cloud-indicator');
       const label = document.getElementById('cloud-status-text');
@@ -1243,7 +1289,7 @@
     if (window.BroadcastChannel) {
       const bc = new BroadcastChannel('salaya_cloud_bus');
       bc.onmessage = (event) => {
-        if (event.data && event.data.type === 'NEW_RECORD') {
+        if (event.data && (event.data.type === 'NEW_RECORD' || event.data.type === 'DELETE_RECORD')) {
           fetchCloudData();
         }
       };
@@ -1305,9 +1351,14 @@
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #edf2f7; padding-top: 8px; font-size: 12px;">
               <span style="color: var(--text-muted);">ผู้ประเมิน: ${item.assessor}</span>
-              <button onclick="viewRecord('${item.id}')" style="background: var(--primary-light); color: var(--primary); border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-weight: 600;">
-                ดูผลสรุป / ส่งออก PDF
-              </button>
+              <div style="display: flex; gap: 6px;">
+                <button onclick="viewRecord('${item.id}')" style="background: var(--primary-light); color: var(--primary); border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                  ดูผลสรุป / PDF
+                </button>
+                <button onclick="deleteRecord('${item.id}', '${item.name}')" style="background: #fee2e2; color: var(--danger); border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                  🗑️ ลบ
+                </button>
+              </div>
             </div>
           </div>
         `;
