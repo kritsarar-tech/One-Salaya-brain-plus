@@ -856,8 +856,12 @@
   </div>
 
   <script>
-    const HARDCODED_CLOUD_URL = "https://script.google.com/macros/s/AKfycbx71RNlLLebb9MvqDN178drIvZc-x_4C7cWY1gVehi7im8lXIgwx6lWFMUrTtEVbKTgNQ/exec";
-    const DEFAULT_CLOUD_ENDPOINT = localStorage.getItem('salaya_cloud_api') || HARDCODED_CLOUD_URL;
+    // อัปเดต Cloud URL ใหม่ล่าสุด
+    const HARDCODED_CLOUD_URL = "https://script.google.com/macros/s/AKfycbyeiYbZjP_3DWJhx5QHghSB-gAsv6fYWGjuY7V0OGAbyyYoSmWkP2xvUOCLLHdmiRJHyg/exec";
+    
+    // เคลียร์ URL เก่าที่เคยบันทึกค้างในเบราว์เซอร์ออก เพื่อใช้ URL ใหม่อย่างแม่นยำ
+    localStorage.setItem('salaya_cloud_api', HARDCODED_CLOUD_URL);
+    const DEFAULT_CLOUD_ENDPOINT = HARDCODED_CLOUD_URL;
 
     let globalRecords = [];
     let isSubmitting = false;
@@ -1172,13 +1176,12 @@
       renderStatsAndHistory(globalRecords);
     }
 
-    // ลบข้อมูลแบบไม่มีการส่งสัญญาณสะท้อนกลับ
     async function deleteRecord(id, name) {
       if (!confirm(`คุณต้องการลบข้อมูลการประเมินของ "${name}" ใช่หรือไม่?`)) {
         return;
       }
 
-      // 1. อัปเดตฝั่งหน้าบ้านทันที
+      // 1. ลบออกจากหน้าจอและเครื่องทันที
       globalRecords = globalRecords.filter(item => item.id !== id);
       let local = JSON.parse(localStorage.getItem('salaya_records') || '[]');
       local = local.filter(item => item.id !== id);
@@ -1186,7 +1189,7 @@
 
       renderStatsAndHistory(globalRecords);
 
-      // 2. สั่งลบที่ Google Apps Script
+      // 2. ส่งคำสั่งไปลบที่ Google Sheet
       const apiUrl = localStorage.getItem('salaya_cloud_api') || DEFAULT_CLOUD_ENDPOINT;
       if (apiUrl) {
         try {
