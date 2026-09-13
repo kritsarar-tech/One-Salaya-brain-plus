@@ -908,7 +908,9 @@
     // 2. Firebase Cloud Firestore (Real-time NoSQL cloud database)
     // 3. High-resilient LocalStorage fallback to ensure zero data loss offline
 
-    const DEFAULT_CLOUD_ENDPOINT = localStorage.getItem('salaya_cloud_api') || "";
+    // ตั้งค่า Default URL เริ่มต้นให้เป็นลิงก์ Apps Script ของคุณโดยตรง
+    const HARDCODED_CLOUD_URL = "https://script.google.com/macros/s/AKfycbx71RNlLLebb9MvqDN178drIvZc-x_4C7cWY1gVehi7im8lXIgwx6lWFMUrTtEVbKTgNQ/exec";
+    const DEFAULT_CLOUD_ENDPOINT = localStorage.getItem('salaya_cloud_api') || HARDCODED_CLOUD_URL;
 
     // In-memory records synced from cloud
     let globalRecords = [];
@@ -958,9 +960,9 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('pt-date').value = new Date().toISOString().split('T')[0];
-      if (DEFAULT_CLOUD_ENDPOINT) {
-        document.getElementById('cloud-api-url').value = DEFAULT_CLOUD_ENDPOINT;
-      }
+      
+      // กำหนดค่าให้ input แสดงลิงก์ default เสมอ
+      document.getElementById('cloud-api-url').value = DEFAULT_CLOUD_ENDPOINT;
 
       // Render 9Q
       const container9Q = document.getElementById('container-9q-questions');
@@ -1194,7 +1196,6 @@
           updateCloudIndicator(false, "บันทึกในเครื่องแล้ว (รอซิงค์ออนไลน์)");
         }
       } else {
-        // BroadcastChannel sync across all open tabs/windows instantly
         if (window.BroadcastChannel) {
           const bc = new BroadcastChannel('salaya_cloud_bus');
           bc.postMessage({ type: 'NEW_RECORD', record });
@@ -1237,7 +1238,6 @@
       }
     }
 
-    // Listen to real-time events across other windows/devices
     if (window.BroadcastChannel) {
       const bc = new BroadcastChannel('salaya_cloud_bus');
       bc.onmessage = (event) => {
